@@ -1,0 +1,32 @@
+{
+  "name": "ordered-regions",
+  "version": "1.0.0",
+  "description": "submit out of order data and receive that data ordered sequentially and/or in blocks",
+  "main": "ordered-regions.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/silverbucket/ordered-regions.git"
+  },
+  "keywords": [
+    "array",
+    "data",
+    "chunks",
+    "binary",
+    "data",
+    "chunking",
+    "file",
+    "transfer"
+  ],
+  "author": "Nick Jennings <nick@silverbucket.net>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/silverbucket/ordered-regions/issues"
+  },
+  "homepage": "https://github.com/silverbucket/ordered-regions#readme",
+  "dependencies": {
+    "jasmine": "^3.1.0"
+  }
+}
