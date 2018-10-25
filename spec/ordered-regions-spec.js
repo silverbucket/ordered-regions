@@ -24,15 +24,15 @@ function arrayRange(a, b, step) {
 
 describe("OrderedRegions", () => {
     const MAX = 33,
-          BLOCKS = 8,
+          GROUP = 8,
           DIFF = 2;
 
     beforeEach(() => {
-        this.or = new OrderedRegions(MAX, BLOCKS);
+        this.or = new OrderedRegions(MAX, GROUP);
     });
 
     it("can be initialized", () => {
-        expect(this.or.block).toEqual(BLOCKS);
+        expect(this.or.group).toEqual(GROUP);
     });
 
     it("handles onEach order", (done) => {
@@ -50,7 +50,7 @@ describe("OrderedRegions", () => {
         }
     });
 
-    it("handles onBlock", (done) => {
+    it("handles onGroup", (done) => {
         let order_each = [];
         this.or.onEach = (item) => {
             order_each.push(item.id);
@@ -60,11 +60,11 @@ describe("OrderedRegions", () => {
                 expect(order_each).toEqual(d);
             }
         };
-        this.or.onBlock = (items) => {
+        this.or.onGroup = (items) => {
             if (items[items.length - 1].id === MAX) {
                 expect(items.length).toEqual(DIFF);
             } else {
-                expect(items.length).toEqual(BLOCKS);
+                expect(items.length).toEqual(GROUP);
             }
         };
 
@@ -79,30 +79,30 @@ describe("OrderedRegions", () => {
 
     it("handles onComplete", (done) => {
         let order_each = [];
-        let order_blocks = [];
+        let order_groups = [];
 
         this.or.onEach = (item) => {
             order_each.push(item.id);
             expect(item.id).toEqual(order_each.length - 1);
         };
 
-        this.or.onBlock = (items) => {
+        this.or.onGroup = (items) => {
             if (items[items.length - 1].id === MAX) {
                 expect(items.length).toEqual(DIFF);
             } else {
-                expect(items.length).toEqual(BLOCKS);
+                expect(items.length).toEqual(GROUP);
             }
             let item_ids = [];
             items.forEach((item) => {
                 item_ids.push(item.id);
             });
-            order_blocks = order_blocks.concat(item_ids);
+            order_groups = order_groups.concat(item_ids);
         };
 
         this.or.onComplete = () => {
             const gen_order = arrayRange(0, MAX);
             expect(gen_order).toEqual(order_each);
-            expect(order_each).toEqual(order_blocks);
+            expect(order_each).toEqual(order_groups);
             done();
         };
 
@@ -129,29 +129,29 @@ describe("OrderedRegions", () => {
 describe("OrderedRegions large random set", () => {
     it("can take large amounts of out of order items", (done) => {
         const MAX = 10,
-              BLOCKS = 8,
+              GROUP = 8,
               DIFF = 3;
 
-        const or = new OrderedRegions(MAX, BLOCKS);
+        const or = new OrderedRegions(MAX, GROUP);
         let order_each = [];
-        let order_blocks = [];
+        let order_groups = [];
 
         or.onEach = (item) => {
             order_each.push(item.id);
             expect(item.id).toEqual(order_each.length - 1);
         };
 
-        or.onBlock = (items) => {
+        or.onGroup = (items) => {
             if (items[items.length - 1].id === MAX) {
                 expect(items.length).toEqual(DIFF);
             } else {
-                expect(items.length).toEqual(BLOCKS);
+                expect(items.length).toEqual(GROUP);
             }
             let item_ids = [];
             items.forEach((item) => {
                 item_ids.push(item.id);
             });
-            order_blocks = order_blocks.concat(item_ids);
+            order_groups = order_groups.concat(item_ids);
         };
 
         or.onComplete = () => {
@@ -159,7 +159,7 @@ describe("OrderedRegions large random set", () => {
             expect(gen_order).toEqual(order_each);
             // console.log(oneach_order);
             // console.log(order_called);
-            expect(order_each).toEqual(order_blocks);
+            expect(order_each).toEqual(order_groups);
             done();
         };
 

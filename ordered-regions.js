@@ -1,18 +1,23 @@
-module.exports = class OrderedRegions {
-    constructor(end, block) {
-        this.end = end;
-        this.block = block;
+class OrderedRegions {
+    /**
+     *
+     * @param {int} total call onComplete when this total number of ordered segments collected
+     * @param {int} group call onGroup handler each time this number of ordered segments collected
+     */
+    constructor(total, group) {
+        this.total = total;
+        this.group = group;
         this._stack = [];
         this._cycle = null;
     }
 
     onEach(item) { throw new Error("no handler set for onEach"); }
-    onBlock(items) { throw new Error("no handler set for onBlock"); }
+    onGroup(items) { throw new Error("no handler set for onGroup"); }
     onComplete() { throw new Error("no handler set for onComplete"); }
 
     /**
      * Submit an item to this collection.
-     * @param item
+     * @param {object} item must contain an id property with an int indicating position
      */
     submit(item) {
         let entry = {
@@ -31,13 +36,13 @@ module.exports = class OrderedRegions {
     _startCycle() {
         let nextBlock = 0;
 
-        const callProcessBlock = (pos) => {
-            this._processBlock(pos, nextBlock);
+        const callProcessGroup = (pos) => {
+            this._processGroup(pos, nextBlock);
             nextBlock = pos + 1;
         };
 
         this._cycle = setInterval(() => {
-            for (let i = nextBlock; i <= nextBlock + this.block; i++) {
+            for (let i = nextBlock; i <= nextBlock + this.group; i++) {
                 let blockCalled = false;
 
                 if (!this._stack[i]) {
@@ -46,14 +51,14 @@ module.exports = class OrderedRegions {
                     this._processEntry(i);
                 }
 
-                if (i === nextBlock + this.block - 1) {
+                if (i === nextBlock + this.group - 1) {
                     blockCalled = true;
-                    callProcessBlock(i);
+                    callProcessGroup(i);
                 }
 
-                if (i === this.end) {
+                if (i === this.total) {
                     if (! blockCalled) {
-                        callProcessBlock(i)
+                        callProcessGroup(i)
                     }
                     clearInterval(this._cycle);
                     setTimeout(this.onComplete, 0);
@@ -67,13 +72,15 @@ module.exports = class OrderedRegions {
         setTimeout(this.onEach.bind(null, this._stack[pos].item), 0);
     }
 
-    _processBlock(pos, lastBlock) {
+    _processGroup(pos, lastBlock) {
         let entries = [];
         for (let i = lastBlock; i <= pos; i++) {
             const e = this._stack[i];
             entries.push(e.item);
         }
-        // console.log('_processBlock('+ pos +', ' + lastBlock + ') sending ' + entries.length + ' entries.');
-        setTimeout(this.onBlock.bind(null, entries), 0);
+        // console.log('_processGroup('+ pos +', ' + lastBlock + ') sending ' + entries.length + ' entries.');
+        setTimeout(this.onGroup.bind(null, entries), 0);
     }
 };
+
+module.exports = OrderedRegions;
