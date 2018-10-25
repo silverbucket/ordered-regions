@@ -1,6 +1,5 @@
 const OrderedRegions = require("../ordered-regions");
 
-
 function arrayRange(a, b, step) {
     let range = [];
 
