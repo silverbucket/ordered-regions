@@ -9,7 +9,7 @@ submit out of order objects and receive that data ordered sequentially and/or in
 ## usage
 
 ```javascript
-const OrderedRegions = require("../ordered-regions");
+const OrderedRegions = require("ordered-regions");
 
 const TOTAL = 32;
 const or = OrderedRegions({
